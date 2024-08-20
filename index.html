@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html>
+
+<head lang="en">
+    <meta charset="UTF-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+
+    <title>DriveEditor</title>
+
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:width" content="1296">
+    <meta property="og:image:height" content="840">
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="DriveEditor" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title"
+        content="DriveEditor: A Unified 3D Information-Guided Framework for Controllable Object Editing in Driving Scenes" />
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.8.0/codemirror.min.css">
+    <link rel="stylesheet" href="./css/app.css">
+
+    <link rel="stylesheet" href="./css/bootstrap.min.css">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.8.0/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.5.3/clipboard.min.js"></script>
+    <script src="./js/video_comparison.js"></script>
+    <script src="./js/app.js"></script>
+
+    <style>
+        .slick-prev:before,
+        .slick-next:before {
+            color: black;
+
+        }
+
+        /* .container {
+            margin-left: -100px;
+        } */
+        .image-row {
+            display: flex;
+            justify-content: center;
+        }
+
+        .image-wrapper {
+            margin: 0px 10px;
+            text-align: center;
+        }
+
+        .caption-row {
+            align-items: flex-end;
+        }
+
+        .caption-row .image-wrapper {
+            margin-bottom: 20px;
+        }
+
+        .caption-row .image-wrapper p {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container" id="main" style="width: 70%">
+        <div class="row">
+            <h2 class="col-md-12 text-center">
+                <b>DriveEditor: A Unified 3D Information-Guided Framework <br> for Controllable Object Editing in
+                    Driving Scenes</b> </br>
+            </h2>
+        </div>
+
+        <div class="row">
+            <h4 class="col-md-12 text-center">
+                The first diffusion-based unified framework capable of <br> repositioning, inserting, replacing, and
+                deleting objects in driving scenario videos. </br>
+            </h4>
+        </div>
+
+        <div class="row ">
+            <div class="col-md-8 col-md-offset-2 ">
+                <h3>
+                    <b>Abstract</b>
+                </h3>
+                <p class="text-justify ">
+                    Vision-centric autonomous driving systems require diverse data for robust training and evaluation,
+                    which can be augmented by manipulating object positions and appearances within existing scene
+                    captures. While recent advancements in diffusion models have shown promise in video editing, their
+                    application to object manipulation in driving scenarios remains challenging due to imprecise
+                    positional control and difficulties in preserving high-fidelity object appearances. To address these
+                    challenges in position and appearance control, we introduce DriveEditor, the first diffusion-based
+                    framework for object editing in driving videos. DriveEditor offers a unified framework for
+                    comprehensive object editing operations, including repositioning, replacement, deletion, and
+                    insertion. These diverse manipulations are all achieved through a shared set of varying inputs,
+                    processed by identical position control and appearance maintenance modules. The position control
+                    module projects the given 3D bounding box while preserving depth information and hierarchically
+                    injects it into the diffusion process, enabling precise control over object position and
+                    orientation. The appearance maintenance module preserves consistent attributes with a single
+                    reference image by employing a three-tiered approach: low-level detail preservation, high-level
+                    semantic maintenance, and the integration of 3D priors from a novel view synthesis model. Extensive
+                    qualitative and quantitative evaluations on the nuScenes dataset demonstrate DriveEditor's
+                    exceptional fidelity and controllability in generating diverse driving scene edits, as well as its
+                    remarkable ability to facilitate downstream tasks. The code will be made publicly available.
+                </p>
+            </div>
+        </div>
+
+        <div class="row " style="margin-top:20px">
+            <div class="col-md-8 col-md-offset-2 ">
+                <img src="./img/pipeline.png" width="100%">
+                </img>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                <h3>
+                    <b>Long Video Editing results (39 Frames)</b>
+                </h3>
+                <div class="text-center">
+                    <div style="position:relative;">
+
+                        <div class="image-row">
+                            <div class="image-wrapper">
+                                <div class="video-compare-container" id="seq29_decompDiv">
+                                    <video class="video" id="seq29_decomp" loop playsinline autoPlay muted
+                                        src="videos/long1.mp4" onplay="resizeAndPlay(this)">
+                                    </video>
+                                    <canvas height=0 class="videoMerge" id="seq29_decompMerge"></canvas>
+                                    <h5>
+                                        Replacement
+                                    </h5>
+
+                                </div>
+                            </div>
+
+                            <div class="image-wrapper">
+                                <div class="video-compare-container" id="seq30_decompDiv">
+                                    <video class="video" id="seq30_decomp" loop playsinline autoPlay muted
+                                        src="videos/long2.mp4" onplay="resizeAndPlay(this)">
+                                    </video>
+                                    <canvas height=0 class="videoMerge" id="seq30_decompMerge"></canvas>
+                                    <h5>
+                                        Deletion
+                                    </h5>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- -------------------------------------------------------- -->
+
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                <h3>
+                    <b>Brief Introduction of Our 4 Kinds of Object Editing</b>
+                </h3>
+                <div class="text-center">
+                    <div style="position:relative;">
+
+                        <div class="image-row">
+                            <div class="image-wrapper">
+                                <div class="video-compare-container" id="seq01_decompDiv">
+                                    <video class="video" id="seq01_decomp" loop playsinline autoPlay muted
+                                        src="videos/v1_deletion.mp4" onplay="resizeAndPlay(this)">
+                                    </video>
+                                    <canvas height=0 class="videoMerge" id="seq01_decompMerge"></canvas>
+                                    <h5>
+                                        Deletion
+                                    </h5>
+
+                                </div>
+                            </div>
+
+                            <div class="image-wrapper">
+                                <div class="video-compare-container" id="seq02_decompDiv">
+                                    <video class="video" id="seq02_decomp" loop playsinline autoPlay muted
+                                        src="videos/v1_insertion.mp4" onplay="resizeAndPlay(this)">
+                                    </video>
+                                    <canvas height=0 class="videoMerge" id="seq02_decompMerge"></canvas>
+                                    <h5>
+                                        Insertion
+                                    </h5>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                <div class="text-center">
+                    <div style="position:relative;">
+
+                        <div class="image-row">
+                            <div class="image-wrapper">
+                                <div class="video-compare-container" id="seq03_editDiv">
+                                    <video class="video" id="seq03_edit" loop playsinline autoPlay muted
+                                        src="videos/v1_replacement.mp4" onplay="resizeAndPlay(this)">
+                                    </video>
+                                    <canvas height=0 class="videoMerge" id="seq03_editMerge"></canvas>
+                                    <h5>
+                                        Replacement
+                                    </h5>
+                                </div>
+                            </div>
+
+                            <div class="image-wrapper">
+                                <div class="video-compare-container" id="seq04_editDiv">
+                                    <video class="video" id="seq04_edit" loop playsinline autoPlay muted
+                                        src="videos/v1_repositioning.mp4" onplay="resizeAndPlay(this)">
+                                    </video>
+                                    <canvas height=0 class="videoMerge" id="seq04_editMerge"></canvas>
+                                    <h5>
+                                        Repositioning
+                                    </h5>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- -------------------------------------------------------- -->
+
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                <h3>
+                    <b>Brief Introduction of Our 4 Kinds of Object Editing</b>
+                </h3>
+                <div class="text-center">
+                    <div style="position:relative;">
+
+                        <div class="image-row">
+                            <div class="image-wrapper">
+                                <div class="video-compare-container" id="seq05_decompDiv">
+                                    <video class="video" id="seq05_decomp" loop playsinline autoPlay muted
+                                        src="videos/v2_deletion.mp4" onplay="resizeAndPlay(this)">
+                                    </video>
+                                    <canvas height=0 class="videoMerge" id="seq05_decompMerge"></canvas>
+                                    <h5>
+                                        Deletion
+                                    </h5>
+
+                                </div>
+                            </div>
+
+                            <div class="image-wrapper">
+                                <div class="video-compare-container" id="seq06_decompDiv">
+                                    <video class="video" id="seq06_decomp" loop playsinline autoPlay muted
+                                        src="videos/v2_insertion.mp4" onplay="resizeAndPlay(this)">
+                                    </video>
+                                    <canvas height=0 class="videoMerge" id="seq06_decompMerge"></canvas>
+                                    <h5>
+                                        Insertion
+                                    </h5>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                <div class="text-center">
+                    <div style="position:relative;">
+
+                        <div class="image-row">
+                            <div class="image-wrapper">
+                                <div class="video-compare-container" id="seq07_editDiv">
+                                    <video class="video" id="seq07_edit" loop playsinline autoPlay muted
+                                        src="videos/v2_replacement.mp4" onplay="resizeAndPlay(this)">
+                                    </video>
+                                    <canvas height=0 class="videoMerge" id="seq07_editMerge"></canvas>
+                                    <h5>
+                                        Replacement
+                                    </h5>
+                                </div>
+                            </div>
+
+                            <div class="image-wrapper">
+                                <div class="video-compare-container" id="seq08_editDiv">
+                                    <video class="video" id="seq08_edit" loop playsinline autoPlay muted
+                                        src="videos/v2_repositioning.mp4" onplay="resizeAndPlay(this)">
+                                    </video>
+                                    <canvas height=0 class="videoMerge" id="seq08_editMerge"></canvas>
+                                    <h5>
+                                        Repositioning
+                                    </h5>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- -------------------------------------------------------- -->
+
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                <h3>
+                    <b>Insertion Results</b>
+                </h3>
+                <label>
+                    <input type="checkbox" id="videoToggleInsertion" onchange="toggleVideoInsertion()"> Show GT boxes on
+                    the
+                    videos
+                </label>
+                <div class="text-center">
+                    <div style="position:relative;">
+
+                        <div class="image-row">
+                            <div class="image-wrapper">
+                                <div class="video-compare-container" id="seq21_decompDiv">
+                                    <video class="video" id="seq21_decomp" loop playsinline autoPlay muted
+                                        src="videos/insertion1.mp4" onplay="resizeAndPlay(this)">
+                                    </video>
+                                    <canvas height=0 class="videoMerge" id="seq21_decompMerge"></canvas>
+                                    <h5>
+                                        Insertion Result 1
+                                    </h5>
+
+                                </div>
+                            </div>
+
+                            <div class="image-wrapper">
+                                <div class="video-compare-container" id="seq22_decompDiv">
+                                    <video class="video" id="seq22_decomp" loop playsinline autoPlay muted
+                                        src="videos/insertion2.mp4" onplay="resizeAndPlay(this)">
+                                    </video>
+                                    <canvas height=0 class="videoMerge" id="seq22_decompMerge"></canvas>
+                                    <h5>
+                                        Insertion Result 2
+                                    </h5>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                <div class="text-center">
+                    <div style="position:relative;">
+
+                        <div class="image-row">
+                            <div class="image-wrapper">
+                                <div class="video-compare-container" id="seq23_decompDiv">
+                                    <video class="video" id="seq23_decomp" loop playsinline autoPlay muted
+                                        src="videos/insertion3.mp4" onplay="resizeAndPlay(this)">
+                                    </video>
+                                    <canvas height=0 class="videoMerge" id="seq23_decompMerge"></canvas>
+                                    <h5>
+                                        Insertion Result 3
+                                    </h5>
+
+                                </div>
+                            </div>
+
+                            <div class="image-wrapper">
+                                <div class="video-compare-container" id="seq24_decompDiv">
+                                    <video class="video" id="seq24_decomp" loop playsinline autoPlay muted
+                                        src="videos/insertion4.mp4" onplay="resizeAndPlay(this)">
+                                    </video>
+                                    <canvas height=0 class="videoMerge" id="seq24_decompMerge"></canvas>
+                                    <h5>
+                                        Insertion Result 4
+                                    </h5>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            function toggleVideoInsertion() {
+                var checkbox = document.getElementById('videoToggleInsertion');
+                var video1 = document.getElementById('seq21_decomp');
+                var video2 = document.getElementById('seq22_decomp');
+                var video3 = document.getElementById('seq23_decomp');
+                var video4 = document.getElementById('seq24_decomp');
+
+                if (checkbox.checked) {
+                    video1.src = "videos/insertion1_box.mp4";
+                    video2.src = "videos/insertion2_box.mp4";
+                    video3.src = "videos/insertion3_box.mp4";
+                    video4.src = "videos/insertion4_box.mp4";
+                } else {
+                    video1.src = "videos/insertion1.mp4";
+                    video2.src = "videos/insertion2.mp4";
+                    video3.src = "videos/insertion3.mp4";
+                    video4.src = "videos/insertion4.mp4";
+                }
+            }
+        </script>
+
+        <!-- -------------------------------------------------------- -->
+
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                <h3>
+                    <b>Repositioning Results</b>
+                </h3>
+                <label>
+                    <input type="checkbox" id="videoToggleRepositioning" onchange="toggleVideoRepositioning()"> Show GT
+                    boxes on the videos
+                </label>
+                <div class="text-center">
+                    <div style="position:relative;">
+
+                        <div class="image-row">
+                            <div class="image-wrapper">
+                                <div class="video-compare-container" id="seq25_decompDiv">
+                                    <video class="video" id="seq25_decomp" loop playsinline autoPlay muted
+                                        src="videos/repositioning1.mp4" onplay="resizeAndPlay(this)">
+                                    </video>
+                                    <canvas height=0 class="videoMerge" id="seq25_decompMerge"></canvas>
+                                    <h5>
+                                        Repositioning Result 1
+                                    </h5>
+
+                                </div>
+                            </div>
+
+                            <div class="image-wrapper">
+                                <div class="video-compare-container" id="seq26_decompDiv">
+                                    <video class="video" id="seq26_decomp" loop playsinline autoPlay muted
+                                        src="videos/repositioning2.mp4" onplay="resizeAndPlay(this)">
+                                    </video>
+                                    <canvas height=0 class="videoMerge" id="seq26_decompMerge"></canvas>
+                                    <h5>
+                                        Repositioning Result 2
+                                    </h5>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                <div class="text-center">
+                    <div style="position:relative;">
+
+                        <div class="image-row">
+                            <div class="image-wrapper">
+                                <div class="video-compare-container" id="seq27_decompDiv">
+                                    <video class="video" id="seq27_decomp" loop playsinline autoPlay muted
+                                        src="videos/repositioning3.mp4" onplay="resizeAndPlay(this)">
+                                    </video>
+                                    <canvas height=0 class="videoMerge" id="seq27_decompMerge"></canvas>
+                                    <h5>
+                                        Repositioning Result 3
+                                    </h5>
+
+                                </div>
+                            </div>
+
+                            <div class="image-wrapper">
+                                <div class="video-compare-container" id="seq28_decompDiv">
+                                    <video class="video" id="seq28_decomp" loop playsinline autoPlay muted
+                                        src="videos/repositioning4.mp4" onplay="resizeAndPlay(this)">
+                                    </video>
+                                    <canvas height=0 class="videoMerge" id="seq28_decompMerge"></canvas>
+                                    <h5>
+                                        Repositioning Result 4
+                                    </h5>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            function toggleVideoRepositioning() {
+                var checkbox = document.getElementById('videoToggleRepositioning');
+                var video1 = document.getElementById('seq25_decomp');
+                var video2 = document.getElementById('seq26_decomp');
+                var video3 = document.getElementById('seq27_decomp');
+                var video4 = document.getElementById('seq28_decomp');
+
+                if (checkbox.checked) {
+                    video1.src = "videos/repositioning1_box.mp4";
+                    video2.src = "videos/repositioning2_box.mp4";
+                    video3.src = "videos/repositioning3_box.mp4";
+                    video4.src = "videos/repositioning4_box.mp4";
+                } else {
+                    video1.src = "videos/repositioning1.mp4";
+                    video2.src = "videos/repositioning2.mp4";
+                    video3.src = "videos/repositioning3.mp4";
+                    video4.src = "videos/repositioning4.mp4";
+                }
+            }
+        </script>
+
+        <!-- -------------------------------------------------------- -->
+
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                <h3>
+                    <b>Replacement Results</b>
+                </h3>
+                <div class="text-center">
+                    <div style="position:relative;">
+
+                        <div class="image-row">
+                            <div class="image-wrapper">
+                                <div class="video-compare-container" id="seq09_decompDiv">
+                                    <video class="video" id="seq09_decomp" loop playsinline autoPlay muted
+                                        src="videos/replacement1.mp4" onplay="resizeAndPlay(this)">
+                                    </video>
+                                    <canvas height=0 class="videoMerge" id="seq09_decompMerge"></canvas>
+                                    <h5>
+                                        Replacement Result 1
+                                    </h5>
+
+                                </div>
+                            </div>
+
+                            <div class="image-wrapper">
+                                <div class="video-compare-container" id="seq10_decompDiv">
+                                    <video class="video" id="seq10_decomp" loop playsinline autoPlay muted
+                                        src="videos/replacement2.mp4" onplay="resizeAndPlay(this)">
+                                    </video>
+                                    <canvas height=0 class="videoMerge" id="seq10_decompMerge"></canvas>
+                                    <h5>
+                                        Replacement Result 2
+                                    </h5>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                <div class="text-center">
+                    <div style="position:relative;">
+
+                        <div class="image-row">
+                            <div class="image-wrapper">
+                                <div class="video-compare-container" id="seq11_decompDiv">
+                                    <video class="video" id="seq11_decomp" loop playsinline autoPlay muted
+                                        src="videos/replacement3.mp4" onplay="resizeAndPlay(this)">
+                                    </video>
+                                    <canvas height=0 class="videoMerge" id="seq11_decompMerge"></canvas>
+                                    <h5>
+                                        Replacement Result 3
+                                    </h5>
+
+                                </div>
+                            </div>
+
+                            <div class="image-wrapper">
+                                <div class="video-compare-container" id="seq12_decompDiv">
+                                    <video class="video" id="seq12_decomp" loop playsinline autoPlay muted
+                                        src="videos/replacement4.mp4" onplay="resizeAndPlay(this)">
+                                    </video>
+                                    <canvas height=0 class="videoMerge" id="seq12_decompMerge"></canvas>
+                                    <h5>
+                                        Replacement Result 4
+                                    </h5>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- -------------------------------------------------------- -->
+
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                <h3>
+                    <b>Deletion Results</b>
+                </h3>
+                <div class="text-center">
+                    <div style="position:relative;">
+
+                        <div class="image-row">
+                            <div class="image-wrapper">
+                                <div class="video-compare-container" id="seq15_decompDiv">
+                                    <video class="video" id="seq15_decomp" loop playsinline autoPlay muted
+                                        src="videos/deletion1.mp4" onplay="resizeAndPlay(this)">
+                                    </video>
+                                    <canvas height=0 class="videoMerge" id="seq15_decompMerge"></canvas>
+                                    <h5>
+                                        Deletion Result 1
+                                    </h5>
+
+                                </div>
+                            </div>
+
+                            <div class="image-wrapper">
+                                <div class="video-compare-container" id="seq16_decompDiv">
+                                    <video class="video" id="seq16_decomp" loop playsinline autoPlay muted
+                                        src="videos/deletion2.mp4" onplay="resizeAndPlay(this)">
+                                    </video>
+                                    <canvas height=0 class="videoMerge" id="seq16_decompMerge"></canvas>
+                                    <h5>
+                                        Deletion Result 2
+                                    </h5>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                <div class="text-center">
+                    <div style="position:relative;">
+
+                        <div class="image-row">
+                            <div class="image-wrapper">
+                                <div class="video-compare-container" id="seq17_decompDiv">
+                                    <video class="video" id="seq17_decomp" loop playsinline autoPlay muted
+                                        src="videos/deletion3.mp4" onplay="resizeAndPlay(this)">
+                                    </video>
+                                    <canvas height=0 class="videoMerge" id="seq17_decompMerge"></canvas>
+                                    <h5>
+                                        Deletion Result 3
+                                    </h5>
+
+                                </div>
+                            </div>
+
+                            <div class="image-wrapper">
+                                <div class="video-compare-container" id="seq18_decompDiv">
+                                    <video class="video" id="seq18_decomp" loop playsinline autoPlay muted
+                                        src="videos/deletion4.mp4" onplay="resizeAndPlay(this)">
+                                    </video>
+                                    <canvas height=0 class="videoMerge" id="seq18_decompMerge"></canvas>
+                                    <h5>
+                                        Deletion Result 4
+                                    </h5>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                <!-- <h3>
+                    Acknowledgements
+                </h3> -->
+                <p class="text-justify">
+                    The website template was borrowed from <a href="http://mgharbi.com/">Michaël Gharbi</a> and <a href="https://jonbarron.info/mipnerf360/">Jon Barron</a>.
+                </p>
+            </div>
+        </div>
+            </div>
+        </div>
+
+    </div>
+
+
+
+
+</body>
+
+</html>
